@@ -1,12 +1,12 @@
 from PIL import Image
 import time
 start_time = time.time()
-file_name = "maze_04"
+file_name = "maze_03"
 im = Image.open(f"maze/{file_name}.png")
 width, height = im.size
 print(f"Picture size: {width}x{height}")
 pixels = im.load()
-red = (255, 255, 255, 0)
+mark = (255, 255, 255, 0)
 white = (255, 255, 255, 255)
 black = (0, 0, 0, 255)
 green = (0, 255, 0, 255)
@@ -46,13 +46,12 @@ startingPoint = [leftBorder + 1, topBorder + 1]
 class Solver:
     def __init__(self):
         self.currentPosition = startingPoint
-        # self.route = [startingPoint]
         self.direction = 'South'
 
     def mark(self):
         x = self.currentPosition[0]
         y = self.currentPosition[1]
-        pixels[x, y] = red
+        pixels[x, y] = mark
 
     def draw(self):
         direction = self.direction
@@ -67,16 +66,6 @@ class Solver:
                 pixels[x + i, y] = green
             elif direction == 'West':
                 pixels[x, y + i] = green
-
-    def scan_route(self):
-        direction = self.direction
-        x = self.currentPosition[0]
-        y = self.currentPosition[1]
-        if direction == 'North':
-            if pixels[x, y+1] == red:
-                return 'North'
-            elif pixels[x, y+1] == red:
-                return 'North'
 
     def scan_for_walls(self):
         detector = [0, 0, 0, 0]
@@ -135,7 +124,7 @@ class Solver:
         self.currentPosition = [leftBorder + 1, topBorder + 1]
         count = 0
         self.direction = 'South'
-        while self.currentPosition[1] < height - 10 or self.currentPosition[0] < width - 10:
+        while self.currentPosition[1] < height - 10 and self.currentPosition[0] < width - 10:
             count += 1
             direction = self.direction
             if self.currentPosition[1] == height-2:
@@ -151,22 +140,22 @@ class Solver:
                 "West": pixels[x - 1, y]
             }
             # scan left side for shortcuts
-            if surround_colors[direction] == red:
+            if surround_colors[direction] == mark:
                 for i in range(1, tunnel_size):
                     if x+tunnel_size < width or y+tunnel_size < height:
-                        if direction == 'North' and pixels[x - i, y] == red:
+                        if direction == 'North' and pixels[x - i, y] == mark:
                             self.turn_left()
                             self.move('draw')
                             break
-                        elif direction == 'East' and pixels[x, y - i] == red:
+                        elif direction == 'East' and pixels[x, y - i] == mark:
                             self.turn_left()
                             self.move('draw')
                             break
-                        elif direction == 'South' and pixels[x + i, y] == red:
+                        elif direction == 'South' and pixels[x + i, y] == mark:
                             self.turn_left()
                             self.move('draw')
                             break
-                        elif direction == 'West' and pixels[x, y + i] == red:
+                        elif direction == 'West' and pixels[x, y + i] == mark:
                             self.turn_left()
                             self.move('draw')
                             break
@@ -177,16 +166,16 @@ class Solver:
                     # if x+i >= width or y+i >= height:
                     #     self.move('draw')
                     #     break
-                    if direction == 'North' and pixels[x, y - i] == red:
+                    if direction == 'North' and pixels[x, y - i] == mark:
                         self.move('draw')
                         break
-                    elif direction == 'East' and pixels[x + i, y] == red:
+                    elif direction == 'East' and pixels[x + i, y] == mark:
                         self.move('draw')
                         break
-                    elif direction == 'South' and pixels[x, y + i] == red:
+                    elif direction == 'South' and pixels[x, y + i] == mark:
                         self.move('draw')
                         break
-                    elif direction == 'West' and pixels[x - i, y] == red:
+                    elif direction == 'West' and pixels[x - i, y] == mark:
                         self.move('draw')
                         break
                     elif i == tunnel_size-1:
