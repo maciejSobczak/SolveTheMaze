@@ -22,7 +22,6 @@ for i in range(0, height):
     if pixels[leftBorder, i][0] < 255:
         topBorder = i
         break
-print(f"Top left corner detected: ({leftBorder}, {topBorder})")
 # endregion
 
 # region get tunnel size
@@ -30,14 +29,11 @@ leftTunnelWall = -1
 rightTunnelWall = -1
 for i in range(leftBorder, width):
     if pixels[i, topBorder] == white and leftTunnelWall == -1:
-        print(f"left tunnel wall coordinates: ({i}, {topBorder})")
         leftTunnelWall = i-1
     elif pixels[i, topBorder] < white and leftTunnelWall >= 0 and rightTunnelWall == -1:
-        print(f"right tunnel wall coordinates: ({i}, {topBorder})")
         rightTunnelWall = i
 
 tunnel_size = rightTunnelWall - leftTunnelWall - 1
-print(f"tunnel size: {tunnel_size}px")
 # endregion
 
 startingPoint = [leftBorder + 1, topBorder + 1]
@@ -83,7 +79,6 @@ class Solver:
 
     def move(self, mark_or_draw):
         direction = self.direction
-        print(f'direction: {direction}')
         if mark_or_draw == 'mark':
             self.mark()
         elif mark_or_draw == 'draw':
@@ -163,9 +158,6 @@ class Solver:
                             self.move('draw')
             elif surround_colors[direction] == white:
                 for i in range(1, tunnel_size):
-                    # if x+i >= width or y+i >= height:
-                    #     self.move('draw')
-                    #     break
                     if direction == 'North' and pixels[x, y - i] == mark:
                         self.move('draw')
                         break
@@ -191,7 +183,6 @@ class Solver:
         while self.currentPosition[1] < height-1:
             count += 1
             walls_detected = self.scan_for_walls()
-            print(f'walls {walls_detected}')
             if sum(walls_detected) == 0:
                 self.turn_right()
                 self.move('mark')
